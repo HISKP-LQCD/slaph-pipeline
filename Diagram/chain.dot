@@ -1,0 +1,84 @@
+digraph {
+  node [style=filled]
+  graph [nodesep=1, ranksep=1, style=filled, color="#EEEEEE"]
+
+  {
+    node [fillcolor = "#aa0000", fontcolor = "#FFFFFF", shape = "component"]
+    label = "QBIG CPU"
+    run_eigen [label = "Generate eigensystem\nQBIG CPU"]
+    run_proj [label = "Run projections\nQBIG CPU"]
+  }
+
+  {
+    node [fillcolor = "#aa0000", fontcolor = "#FFFFFF", shape = "box3d"]
+    label = "QBIG GPU"
+    run_peram [label = "Generate perambulators\nQBIG Pascal"]
+  }
+
+  {
+    node [fillcolor = "#aa0000", fontcolor = "#FFFFFF", shape = "folder"]
+    del_eigen_qbig [label="Delete eigensystem\n/hiskp4"]
+    del_peram_qbig [label="Delete perambulators\n/hiskp4"]
+    del_contr_qbig [label="Delete contractions\n/hiskp4"]
+  }
+
+  {
+    node [fillcolor = "#aa0000", fontcolor = "#FFFFFF", shape = "cds"]
+    label = "QBIG → JUST"
+    copy_eigen [label="Copy eigensystem\n/hiskp4 to SCRATCH"]
+    copy_peram [label="Copy perambulators\n/hiskp4 to SCRATCH"]
+  }
+
+
+  {
+    node [fillcolor = "#005b82", fontcolor = "#FFFFFF", shape = "cds"]
+    copy_contr [label="Copy contractions\nSCRATCH to /hiskp4"]
+  }
+
+  {
+    node [fillcolor = "#005b82", fontcolor = "#FFFFFF", shape = "folder"]
+    label = "JUDAC"
+    tar_eigen [label="Tar eigensystem\nSCRATCH to ARCH"]
+    tar_peram [label="Tar perambulators\nSCRATCH to ARCH"]
+    tar_vdaggerv [label="Tar VdaggerV\nSCRATCH to ARCH"]
+    tar_contr [label="Tar contractions\nSCRATCH to ARCH"]
+    del_eigen_jsc [label="Delete eigensystem\nSCRATCH"]
+    del_peram_jsc [label="Delete perambulators\nSCRATCH"]
+    del_vdaggerv_jsc [label="Delete VdaggerV\nSCRATCH"]
+    del_contr_jsc [label="Delete contractions\nSCRATCH"]
+  }
+
+  {
+    node [fillcolor = "#005b82", fontcolor = "#FFFFFF", shape = "component"]
+    label = "JUWELS"
+    run_vdaggerv [label="Compute VdaggerV\nJUWELS CPUs"]
+    run_contr [label="Run contractions\nJUWELS CPUs"]
+  }
+
+  copy_contr -> run_proj
+  copy_eigen -> del_eigen_qbig
+  copy_eigen -> run_peram
+  copy_eigen -> run_vdaggerv
+  copy_eigen -> tar_eigen
+  copy_peram -> copy_contr
+  copy_peram -> del_peram_qbig
+  copy_peram -> run_vdaggerv
+  copy_peram -> tar_peram
+  run_contr -> copy_contr
+  run_contr -> del_peram_jsc
+  run_contr -> del_vdaggerv_jsc
+  run_contr -> tar_contr
+  run_eigen -> copy_eigen
+  run_peram -> copy_peram
+  run_peram -> del_eigen_qbig
+  run_vdaggerv -> del_eigen_jsc
+  run_vdaggerv -> run_contr
+  run_vdaggerv -> tar_vdaggerv
+  tar_eigen -> del_eigen_jsc
+  tar_peram -> del_peram_jsc
+  tar_vdaggerv -> del_vdaggerv_jsc
+  run_proj -> del_contr_qbig
+  tar_contr -> del_contr_jsc
+  copy_contr -> del_contr_jsc
+
+}
